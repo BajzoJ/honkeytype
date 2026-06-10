@@ -3,11 +3,13 @@
     const savedTheme = localStorage.getItem("theme") || "light";
     const mainStyle = document.getElementById("style");
     const regStyle = document.getElementById("regStyle");
+    const profStyle = document.getElementById("profStyle");
 
     // Ak už v HTML existujú linky (čo v head ešte nemusia byť), aplikujeme hneď
     if (savedTheme === "dark") {
         if (mainStyle) mainStyle.href = "honkeyTypeDark.css";
         if (regStyle) regStyle.href = "registerDark.css";
+        if (profStyle) profStyle.href = "profileDark.css";
     }
 })();
 
@@ -30,15 +32,18 @@ document.addEventListener("DOMContentLoaded", function() {
 function applyTheme(theme) {
     const mainStyle = document.getElementById("style");
     const regStyle = document.getElementById("regStyle");
+    const profStyle = document.getElementById("profStyle");
     const colBtn = document.getElementById("colorBtn");
 
     if (theme === "dark") {
         if (mainStyle) mainStyle.href = "honkeyTypeDark.css";
         if (regStyle) regStyle.href = "registerDark.css";
+        if (profStyle) profStyle.href = "profileDark.css";
         if (colBtn) colBtn.innerHTML = "light mode";
     } else {
         if (mainStyle) mainStyle.href = "honkeyType.css";
         if (regStyle) regStyle.href = "register.css";
+        if (profStyle) profStyle.href = "profile.css";
         if (colBtn) colBtn.innerHTML = "dark mode";
     }
 }

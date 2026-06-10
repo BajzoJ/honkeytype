@@ -1,6 +1,5 @@
 // projekt
 console.log("HonkeyType Hybrid JS loaded");
-console.log("aaaa Hybrid JS loaded");
 
 const wordList = [
   "moan", "arrogant", "messy", "mind", "fabulous", "polish", "foolish", "straw",
@@ -32,7 +31,6 @@ const wordList = [
   "building", "scarce", "retire",
 ];
 
-
 let testduration = 60;     
 let words = [];             // pole so slovami
 let currentWordIndex = 0;   // index pisaneho slova
@@ -47,7 +45,6 @@ const PLACEHOLDER = "\u200B";
 let currentMode = "time";  
 let wordLimit = 30;        
 
-
 const typingInput = document.getElementById("typingInput");
 const wordsDisplay = document.getElementById("wordsDisplay");
 const timeDisplay = document.getElementById("timeDisplay");
@@ -61,7 +58,6 @@ const timeBtn = document.getElementById("timeBtn");
 const wordBtn = document.getElementById("wordBtn");
 const settings = document.querySelector(".settings");
 const colorBtn = document.getElementById("colorBtn");
-
 
 function generateWords() { //generovanie slov
   words = [];
@@ -81,7 +77,6 @@ function generateWords() { //generovanie slov
 
   renderWords();
 }
-
 
 function renderWords() {
   wordsDisplay.innerHTML = "";
@@ -105,13 +100,11 @@ function renderWords() {
       renderCurrentWord(wordSpan, word);
 
     } else if (realIndex < currentWordIndex) {
-
       if (completedWordsStatus[realIndex] === true) {
         wordSpan.className = "word correct-word";
       } else {
         wordSpan.className = "word incorrect-word";
       }
-
       wordSpan.textContent = word;
 
     } else {
@@ -123,9 +116,6 @@ function renderWords() {
     wordsDisplay.appendChild(document.createTextNode(" "));
   }
 }
-
-
-
 
 function renderCurrentWord(wordSpan, word) {
   wordSpan.innerHTML = "";
@@ -156,8 +146,6 @@ function renderCurrentWord(wordSpan, word) {
   }
 }
 
-
-
 function updateStats() {
   let timeElapsed = (testduration - timeLeft) / 60;
   let wpm = 0;
@@ -175,8 +163,6 @@ function updateStats() {
   accuracyDisplay.textContent = accuracy + "%";
 }
 
-
-
 function startTimer() {
   if (timeInterval || currentMode === "words") return;
 
@@ -192,10 +178,17 @@ function startTimer() {
   }, 1000);
 }
 
+function updateModeLabel() {
+  const modeLabel = document.getElementById("modeLabel");
 
+  console.log("Aktuálny mód:", currentMode);
 
-
-
+  if (currentMode === "words") {
+    modeLabel.textContent = "words";
+  } else {
+    modeLabel.textContent = "time";
+  }
+}
 function endTest() {
   clearInterval(timeInterval);
   typingInput.disabled = true;
@@ -258,25 +251,18 @@ function endTest() {
     console.log("Chyba pri ukladaní testu:", err);
   });
 
-
-
   resultsView.classList.remove("hidden");
   testView.classList.add("hidden");
   if (settings) {
     settings.classList.add("hidden");
   }
-
 }
 
-
-
 function restartTest() {
-  // stop timera
   clearInterval(timeInterval);
   timeInterval = null;
   startTime = null;
 
-  // reset hodnot
   timeLeft = testduration;
   currentWordIndex = 0;
   currentInput = "";
@@ -285,8 +271,10 @@ function restartTest() {
 
   if (currentMode === "words") {
     timeDisplay.textContent = wordLimit + "w";
+    document.getElementById("modeLabel").textContent = "words";
   } else {
     timeDisplay.textContent = timeLeft + "s";
+    document.getElementById("modeLabel").textContent = "time";
   }
 
   wpmDisplay.textContent = 0;
@@ -295,11 +283,12 @@ function restartTest() {
 
   resultsView.classList.add("hidden");
   testView.classList.remove("hidden");
-  settings.classList.remove("hidden");
+
+  if (settings) {
+    settings.classList.remove("hidden");
+  }
 
   generateWords();
-
-  
 
   typingInput.disabled = false;
   typingInput.value = PLACEHOLDER;
@@ -307,7 +296,10 @@ function restartTest() {
 }
 
 function setDuration(dur, e) {
+  currentMode = "time";
   testduration = dur;
+
+  updateModeLabel();
 
   let buttons = document.querySelectorAll(".submode-btn");
   for (let i = 0; i < buttons.length; i++) {
@@ -321,24 +313,20 @@ function setDuration(dur, e) {
   restartTest();
 }
 
-
 function setWordCount(count, e) {
   currentMode = "words";
   wordLimit = count;
 
+  updateModeLabel();
+
   clearInterval(timeInterval);
   timeInterval = null;
 
-  if (currentMode === "words") {
-    timeDisplay.textContent = wordLimit + "w";
-  } else {
-    timeDisplay.textContent = timeLeft + "s";
-  }
+  timeDisplay.textContent = wordLimit + "w";
+  document.getElementById("modeLabel").textContent = "words";
 
   restartTest();
 }
-
-
 
 typingInput.addEventListener("input", function(e) {
   if (!typingInput.value.startsWith(PLACEHOLDER)) {
@@ -375,7 +363,6 @@ typingInput.addEventListener("input", function(e) {
       return;
     }
 
-
     currentInput = "";
     typingInput.value = PLACEHOLDER;
     renderWords();
@@ -386,6 +373,7 @@ typingInput.addEventListener("input", function(e) {
   currentInput = cleanValue;
   renderWords();
 });
+
 document.addEventListener("keydown", (e) => {
   if(e.key === " " && currentMode === "words"){
     let remaining = wordLimit - (currentWordIndex + 1);
@@ -394,7 +382,6 @@ document.addEventListener("keydown", (e) => {
     }
   }
 });
-
 
 timeBtn.addEventListener("click", function() {
   currentMode = "time";
@@ -416,8 +403,8 @@ timeBtn.addEventListener("click", function() {
     });
     container.appendChild(btn);
   }
+  updateModeLabel();
 });
-
 
 wordBtn.addEventListener("click", function() {
   currentMode = "words";
@@ -443,6 +430,7 @@ wordBtn.addEventListener("click", function() {
 
     container.appendChild(btn);
   }
+  updateModeLabel();
 });
 
 document.getElementById("supportBtn").addEventListener("click", async (e) => {
@@ -456,7 +444,9 @@ document.getElementById("supportBtn").addEventListener("click", async (e) => {
   alert(`Počet testov v DB: ${data.testsInDB}`);
 });
 
+// Inicializácia na začiatku
 generateWords();
+updateModeLabel();
 
 // Auth hlavička
 const username = localStorage.getItem("username");
